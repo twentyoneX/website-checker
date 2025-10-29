@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Down Checker - Is Your Blog Down?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #ffffff;
+            color: #1a1a1a;
+        }
+
+        .main-section {
+            background: linear-gradient(135deg, #e8e8e8 0%, #d4d4d4 100%);
+            padding: 60px 20px;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .main-title {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-align: center;
+            color: #1a1a1a;
+        }
+
+        .main-subtitle {
+            text-align: center;
+            font-size: 1.1em;
+            color: #4a4a4a;
+            margin-bottom: 40px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            background: #ffffff;
+            color: #000000;
+        }
+
+        .search-box input:focus {
+            outline: 2px solid #4a9fb5;
+        }
+
+        .search-box button {
+            background: #000000;
+            color: white;
+            border: none;
+            padding: 16px 35px;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .search-box button:hover {
+            background: #1a1a1a;
+        }
+
+        .search-box button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .status-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 1px solid #e5e5e5;
+        }
+
+        .status-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .status-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            flex-shrink: 0;
+        }
+
+        .status-icon.up {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-icon.down {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .status-text h2 {
+            font-size: 2em;
+            margin-bottom: 5px;
+            color: #1a1a1a;
+        }
+
+        .status-text p {
+            color: #666;
+            font-size: 1em;
+        }
+
+        .status-details {
+            margin-top: 20px;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 6px;
+            border: 1px solid #e5e5e5;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+
+        .response-time {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .response-time .value {
+            font-size: 3em;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .response-time .label {
+            color: #666;
+            font-size: 1em;
+            margin-top: 8px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #666;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .no-results-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .no-results-text {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .no-results-subtext {
+            font-size: 0.95em;
+            opacity: 0.7;
+        }
+
+        .error-message {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 1.8em;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+
+            .status-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-section">
+        <div class="main-content">
+            <h1 class="main-title">Is your blog down?</h1>
+            <p class="main-subtitle">Check instantly if your Blogspot page is down or is it just you.</p>
+            
+            <div class="search-box">
+                <input type="text" id="urlInput" placeholder="yourblog.blogspot.com" value="">
+                <button id="pingBtn" onclick="checkStatus()">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="statusContainer">
+            <div class="status-card">
+                <div class="no-results">
+                    <div class="no-results-icon">🔍</div>
+                    <div class="no-results-text">Enter a URL to check its status</div>
+                    <div class="no-results-subtext">Type a website URL above and click Search</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Replace this with your Cloudflare Worker URL after deployment
+        const WORKER_URL = '/api/check';
+
+        async function checkStatus() {
+            const urlInput = document.getElementById('urlInput');
+            const pingBtn = document.getElementById('pingBtn');
+            let url = urlInput.value.trim();
+
+            if (!url) {
+                alert('Please enter a website URL');
+                return;
+            }
+
+            // Clean up URL
+            url = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+
+            pingBtn.disabled = true;
+            pingBtn.textContent = 'Checking...';
+
+            document.getElementById('statusContainer').innerHTML = `
+                <div class="status-card">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <div>Checking website status...</div>
+                    </div>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(`${WORKER_URL}?url=${encodeURIComponent(url)}`);
+                const data = await response.json();
+
+                if (data.error) {
+                    displayStatus(url, false, 0, data.error, data.statusCode || 0);
+                } else {
+                    displayStatus(url, data.isUp, data.responseTime, data.message, data.statusCode);
+                }
+
+            } catch (error) {
+                displayStatus(url, false, 0, 'Error connecting to checking service: ' + error.message, 0);
+            }
+
+            pingBtn.disabled = false;
+            pingBtn.textContent = 'Search';
+        }
+
+        function displayStatus(url, isUp, responseTime, message, statusCode) {
+            const statusHtml = `
+                <div class="status-card">
+                    <div class="status-header">
+                        <div class="status-icon ${isUp ? 'up' : 'down'}">
+                            ${isUp ? '✓' : '✕'}
+                        </div>
+                        <div class="status-text">
+                            <h2>${isUp ? 'Up' : 'Down'}</h2>
+                            <p>${url}</p>
+                        </div>
+                    </div>
+                    ${responseTime > 0 ? `
+                        <div class="response-time">
+                            <div class="value">${responseTime} ms</div>
+                            <div class="label">Response time</div>
+                        </div>
+                    ` : ''}
+                    <div class="status-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Status</span>
+                            <span class="detail-value">${message}</span>
+                        </div>
+                        ${statusCode > 0 ? `
+                            <div class="detail-row">
+                                <span class="detail-label">HTTP Status</span>
+                                <span class="detail-value">${statusCode}</span>
+                            </div>
+                        ` : ''}
+                        <div class="detail-row">
+                            <span class="detail-label">Checked at</span>
+                            <span class="detail-value">${new Date().toLocaleString()}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">URL</span>
+                            <span class="detail-value">${url}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('statusContainer').innerHTML = statusHtml;
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('urlInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkStatus();
+            }
+        });
+    </script>
+</body>
+</html>
