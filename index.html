@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Website Status Checker</title>
     <style>
-        /* All your existing CSS goes here. No changes needed in the style section. */
         :root {
             --dns-color: #34a853; /* Green */
             --tcp-color: #ea4335; /* Red */
@@ -22,7 +21,12 @@
             align-items: center;
             padding: 20px 20px 0;
         }
-        .header-text-container { text-align: center; margin: 40px 0; max-width: 900px; width: 100%; }
+        .header-text-container {
+            text-align: center;
+            margin: 10px 0 30px; /* UPDATED: Reduced top margin from 40px to 10px */
+            max-width: 900px;
+            width: 100%;
+        }
         .main-heading { font-size: 2.5rem; font-weight: 700; color: #1a1a1a; margin-bottom: 15px; }
         .sub-heading { font-size: 1.1rem; color: #666; max-width: 500px; margin: 0 auto; }
         .search-container { width: 100%; max-width: 900px; margin-bottom: 30px; }
@@ -57,17 +61,18 @@
     </style>
 </head>
 <body>
-    <!-- Your existing HTML content for the tool goes here... -->
     <div class="header-text-container">
         <h1 class="main-heading">Is your website down?</h1>
         <p class="sub-heading">Check instantly if your website page is down or is it just you.</p>
     </div>
+
     <div class="search-container">
         <div class="search-box">
             <input type="text" id="urlInput" placeholder="luxatic.com">
             <button id="pingBtn" onclick="checkStatus()">Search</button>
         </div>
     </div>
+
     <div class="container">
         <div id="loader" class="loader">
             <p>Pinging from global locations... this may take a moment.</p>
@@ -102,7 +107,6 @@
     </div>
 
     <script>
-        // Your existing checkStatus() and displayResults() functions go here...
         const urlInput = document.getElementById('urlInput');
         const pingBtn = document.getElementById('pingBtn');
         const loader = document.getElementById('loader');
@@ -168,22 +172,14 @@
         });
     </script>
 
-    <!-- ===== NEW SCRIPT TO SEND HEIGHT TO PARENT PAGE ===== -->
     <script>
       const sendHeight = () => {
-        // We add a small buffer (5px) to prevent scrollbars from appearing
         const height = document.body.scrollHeight + 5;
-        // The parent page is peekmyip.com. '*' is also an option for testing.
         parent.postMessage({ type: 'resize', height: height }, 'https://www.peekmyip.com');
       };
-
-      // Use a ResizeObserver to automatically send the height whenever content changes
       const observer = new ResizeObserver(sendHeight);
       observer.observe(document.body);
-
-      // Also send height on initial load
       window.onload = sendHeight;
     </script>
-    <!-- ===== END NEW SCRIPT ===== -->
 </body>
 </html>
