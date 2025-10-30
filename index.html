@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Website Status Checker</title>
+    <title>Website Status Checker</title>
     <style>
         :root {
             --dns-color: #34a853; /* Green */
@@ -28,11 +28,26 @@
             padding: 20px;
         }
 
-        .page-title {
-            font-size: 2.25rem;
-            font-weight: 600;
-            color: #3b82f6; /* Blue title */
+        /* Container for the new heading and subheading */
+        .header-text-container {
+            text-align: center;
             margin: 40px 0;
+            max-width: 900px;
+            width: 100%;
+        }
+        
+        .main-heading {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 15px;
+        }
+        
+        .sub-heading {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 500px; /* Prevents line from getting too long */
+            margin: 0 auto;
         }
         
         .search-container {
@@ -65,7 +80,7 @@
             background: #111827;
             color: white;
             border: none;
-            border-radius: 8px; /* Changed from 50px */
+            border-radius: 8px;
             padding: 12px 30px;
             font-size: 1rem;
             font-weight: 500;
@@ -224,7 +239,10 @@
 </head>
 <body>
 
-    <h1 class="page-title">Website Status Checker</h1>
+    <div class="header-text-container">
+        <h1 class="main-heading">Is your website down?</h1>
+        <p class="sub-heading">Check instantly if your website page is down or is it just you.</p>
+    </div>
 
     <div class="search-container">
         <div class="search-box">
@@ -290,7 +308,7 @@
             urlInput.value = url;
 
             pingBtn.disabled = true;
-            pingBtn.textContent = 'Searching...'; // Updated text
+            pingBtn.textContent = 'Searching...';
             resultsSection.style.display = 'none';
             globalResults.style.display = 'none';
             loader.style.display = 'block';
@@ -307,7 +325,7 @@
                 alert('An error occurred: ' + error.message);
             } finally {
                 pingBtn.disabled = false;
-                pingBtn.textContent = 'Search'; // Updated text
+                pingBtn.textContent = 'Search';
                 loader.style.display = 'none';
             }
         }
