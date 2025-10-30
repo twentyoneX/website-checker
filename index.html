@@ -20,37 +20,35 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #f8f9fa;
+            background: #f7f8fa; /* Light gray background for the whole page */
             color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
         }
 
-        .header-section {
-            background: linear-gradient(90deg, #00c6ff, #0072ff);
-            padding: 50px 20px;
-            color: white;
-            text-align: center;
-        }
-
-        .header-section h1 {
-            font-size: 2.5rem;
+        .page-title {
+            font-size: 2.25rem;
             font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .header-section p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-bottom: 30px;
+            color: #3b82f6; /* Blue title */
+            margin: 40px 0;
         }
         
+        .search-container {
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 30px;
+        }
+
         .search-box {
             display: flex;
-            max-width: 700px;
-            margin: 0 auto;
+            width: 100%;
             background: white;
-            border-radius: 50px;
+            border-radius: 8px;
             padding: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
         .search-box input {
@@ -67,7 +65,7 @@
             background: #111827;
             color: white;
             border: none;
-            border-radius: 50px;
+            border-radius: 8px; /* Changed from 50px */
             padding: 12px 30px;
             font-size: 1rem;
             font-weight: 500;
@@ -85,14 +83,14 @@
         }
 
         .container {
-            max-width: 1100px;
-            margin: 40px auto;
-            padding: 0 20px;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
         }
 
         .results-section {
             display: none; /* Hidden by default */
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
         
         .results-summary-card {
@@ -105,13 +103,10 @@
             align-items: center;
         }
 
-        .summary-left {
+        .summary-content {
             display: flex;
-            gap: 20px;
+            gap: 30px;
             align-items: center;
-            border-right: 1px solid #e2e8f0;
-            padding-right: 30px;
-            flex-shrink: 0;
         }
 
         .status-icon.up {
@@ -136,10 +131,6 @@
             color: #666;
         }
         
-        .fastest-response {
-            padding-left: 20px;
-        }
-
         .fastest-response .value {
             font-size: 2rem;
             font-weight: 700;
@@ -148,27 +139,6 @@
         .fastest-response .label {
             font-size: 0.9rem;
             color: #666;
-        }
-
-        .summary-right {
-            flex-grow: 1;
-            padding-left: 20px;
-        }
-
-        .summary-right h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-        }
-
-        .summary-right button {
-            background: #111827;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 12px 25px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
         }
         
         .global-results {
@@ -254,14 +224,14 @@
 </head>
 <body>
 
-    <header class="header-section">
-        <h1>Global Website Status Checker</h1>
-        <p>Check if your website is down from multiple locations around the world.</p>
+    <h1 class="page-title">Website Status Checker</h1>
+
+    <div class="search-container">
         <div class="search-box">
-            <input type="text" id="urlInput" placeholder="facebook.com">
-            <button id="pingBtn" onclick="checkStatus()">Ping Now</button>
+            <input type="text" id="urlInput" placeholder="luxatic.com">
+            <button id="pingBtn" onclick="checkStatus()">Search</button>
         </div>
-    </header>
+    </div>
 
     <div class="container">
         <div id="loader" class="loader">
@@ -270,20 +240,16 @@
         
         <div id="resultsSection" class="results-section">
             <div class="results-summary-card">
-                <div class="summary-left">
+                <div class="summary-content">
                     <div class="status-icon up">✓</div>
                     <div class="status-text">
                         <h2>Up</h2>
                         <p id="checkedUrl">www.example.com</p>
                     </div>
                     <div class="fastest-response">
-                        <div id="fastestTime" class="value">20 ms</div>
+                        <div id="fastestTime" class="value"></div>
                         <div class="label">Fastest response time</div>
                     </div>
-                </div>
-                <div class="summary-right">
-                    <h3>Start monitoring this website for FREE</h3>
-                    <button>Start Monitoring</button>
                 </div>
             </div>
         </div>
@@ -324,7 +290,7 @@
             urlInput.value = url;
 
             pingBtn.disabled = true;
-            pingBtn.textContent = 'Pinging...';
+            pingBtn.textContent = 'Searching...'; // Updated text
             resultsSection.style.display = 'none';
             globalResults.style.display = 'none';
             loader.style.display = 'block';
@@ -341,7 +307,7 @@
                 alert('An error occurred: ' + error.message);
             } finally {
                 pingBtn.disabled = false;
-                pingBtn.textContent = 'Ping Now';
+                pingBtn.textContent = 'Search'; // Updated text
                 loader.style.display = 'none';
             }
         }
@@ -349,16 +315,13 @@
         function displayResults(url, data) {
             if (data.length === 0) return;
 
-            // Find fastest response
             const fastestResult = data.reduce((min, current) => current.total < min.total ? current : min, data[0]);
             
             checkedUrlEl.textContent = url;
             fastestTimeEl.textContent = `${fastestResult.total} ms`;
             
-            // Clear previous results
             locationList.innerHTML = '';
             
-            // Find max response time for bar scaling
             const maxTime = Math.max(...data.map(res => res.total));
 
             data.forEach(result => {
