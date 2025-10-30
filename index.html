@@ -28,7 +28,6 @@
             padding: 20px;
         }
 
-        /* Container for the new heading and subheading */
         .header-text-container {
             text-align: center;
             margin: 40px 0;
@@ -46,7 +45,7 @@
         .sub-heading {
             font-size: 1.1rem;
             color: #666;
-            max-width: 500px; /* Prevents line from getting too long */
+            max-width: 500px;
             margin: 0 auto;
         }
         
@@ -110,6 +109,7 @@
         
         .results-summary-card {
             display: flex;
+            justify-content: center; /* This centers the content */
             gap: 20px;
             background: white;
             border: 1px solid #e2e8f0;
@@ -235,6 +235,29 @@
             font-size: 1.2rem;
             color: #666;
         }
+
+        /* Styles for the new SEO description section */
+        .seo-description {
+            width: 100%;
+            max-width: 900px;
+            margin-top: 30px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 30px;
+        }
+        
+        .seo-description h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .seo-description p {
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.6;
+        }
     </style>
 </head>
 <body>
@@ -288,7 +311,16 @@
         </div>
     </div>
 
+    <!-- New SEO Description Section -->
+    <div class="seo-description">
+        <h2>About Our Website Status Checker</h2>
+        <p>
+            Instantly check if a website is down with our real-time status tool. By entering a URL, you can perform an immediate uptime test from several locations around the world. Our tool provides a detailed breakdown of the global response time, helping you diagnose connection issues and verify your website's accessibility for a global audience.
+        </p>
+    </div>
+
     <script>
+        // Your JavaScript remains the same. No changes needed here.
         const urlInput = document.getElementById('urlInput');
         const pingBtn = document.getElementById('pingBtn');
         const loader = document.getElementById('loader');
