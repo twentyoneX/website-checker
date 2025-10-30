@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Status Checker</title>
+    <title>Down Checker - Is Your Website Down?</title>
     <style>
         * {
             margin: 0;
@@ -15,36 +15,23 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: #ffffff;
             color: #1a1a1a;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             padding: 20px;
         }
-
-        .page-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #3b82f6;
-            margin: 40px 0 20px 0;
-        }
-
+        
+        /* This top section is styled to be the gray box from the image */
         .main-section {
-            background: none;
-            padding: 0;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-
-        .main-content {
-            max-width: 700px;
-            width: 100%;
-            margin: 0;
-            background: #f7f8fa;
+            background: #f7f8fa; /* Light gray background */
             padding: 40px;
             border-radius: 8px;
+            max-width: 700px;
+            margin: 40px auto 0 auto;
         }
-
+        
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
         .main-title {
             font-size: 2em;
             margin-bottom: 10px;
@@ -98,7 +85,7 @@
         .search-box button:hover {
             background: #374151;
         }
-        
+
         .search-box button:disabled {
             background: #666;
             cursor: not-allowed;
@@ -106,18 +93,16 @@
 
         .container {
             max-width: 700px; /* Same width as the top box for alignment */
-            width: 100%;
-            margin-top: 30px;
+            margin: 30px auto 0 auto;
             padding: 0;
         }
-
+        
         /* This is the main white results card */
         .status-card {
             background: #ffffff;
             border-radius: 8px;
             border: 1px solid #e2e8f0;
             padding: 30px;
-            margin-bottom: 0;
         }
 
         .status-header {
@@ -160,7 +145,7 @@
             color: #666;
             font-size: 1em;
         }
-
+        
         .response-time {
             text-align: center;
             padding: 0;
@@ -178,7 +163,8 @@
             font-size: 1em;
             margin-top: 5px;
         }
-
+        
+        /* This replaces the original nested-box look */
         .status-details {
             margin: 0;
             padding-top: 25px;
@@ -208,9 +194,30 @@
             color: #333;
             font-weight: 500;
         }
-        
-        /* Styles for loading and initial states inside the card */
-        .loading, .no-results {
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #666;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .no-results {
             text-align: center;
             padding: 40px 20px;
             color: #666;
@@ -232,22 +239,11 @@
             opacity: 0.7;
         }
 
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #666;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
         @media (max-width: 768px) {
+            .main-section {
+                margin-top: 20px;
+                padding: 20px;
+            }
             .main-title {
                 font-size: 1.8em;
             }
@@ -264,15 +260,13 @@
     </style>
 </head>
 <body>
-    <h1 class="page-title">Website Status Checker</h1>
-
     <div class="main-section">
         <div class="main-content">
-            <h2 class="main-title">Is your website down?</h2>
+            <h1 class="main-title">Is your website down?</h1>
             <p class="main-subtitle">Check instantly if your website is down or is it just you.</p>
             
             <div class="search-box">
-                <input type="text" id="urlInput" placeholder="luxatic.com" value="">
+                <input type="text" id="urlInput" placeholder="peekmyip.com" value="">
                 <button id="pingBtn" onclick="checkStatus()">Search</button>
             </div>
         </div>
@@ -280,7 +274,7 @@
 
     <div class="container">
         <div id="statusContainer">
-             <div class="status-card">
+            <div class="status-card">
                 <div class="no-results">
                     <div class="no-results-icon">🔍</div>
                     <div class="no-results-text">Enter a URL to check its status</div>
@@ -291,8 +285,8 @@
     </div>
 
     <script>
-        // Replace this with your Cloudflare Worker URL or API endpoint after deployment
-        const WORKER_URL = '/api/check'; // Example endpoint
+        // Replace this with your Cloudflare Worker URL after deployment
+        const WORKER_URL = '/api/check';
 
         async function checkStatus() {
             const urlInput = document.getElementById('urlInput');
@@ -306,7 +300,6 @@
 
             // Clean up URL
             url = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
-            urlInput.value = url; // Update input field with cleaned URL
 
             pingBtn.disabled = true;
             pingBtn.textContent = 'Checking...';
@@ -321,22 +314,8 @@
             `;
 
             try {
-                // This is a placeholder for your actual API call.
-                // For demonstration, we'll simulate a successful API call.
-                // Replace this with your actual fetch call.
-                const simulateApiCall = new Promise(resolve => setTimeout(() => {
-                    resolve({
-                        isUp: true,
-                        responseTime: 41,
-                        message: 'Website is accessible (HTTP 200)',
-                        statusCode: 200
-                    });
-                }, 1500));
-                
-                const data = await simulateApiCall;
-                // const response = await fetch(`${WORKER_URL}?url=${encodeURIComponent(url)}`);
-                // const data = await response.json();
-
+                const response = await fetch(`${WORKER_URL}?url=${encodeURIComponent(url)}`);
+                const data = await response.json();
 
                 if (data.error) {
                     displayStatus(url, false, 0, data.error, data.statusCode || 0);
