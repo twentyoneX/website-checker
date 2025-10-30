@@ -51,59 +51,48 @@
         .legend-item { display: flex; align-items: center; gap: 6px; }
         .legend-color { width: 12px; height: 12px; border-radius: 2px; }
         .location-list { list-style: none; }
-        .location-item { display: flex; align-items: center; padding: 15px 0; border-bottom: 1px solid #f0f0f0; }
-        .location-item:last-child { border-bottom: none; }
-        .location-name { width: 250px; flex-shrink: 0; font-weight: 500; }
-        .response-bar-container { flex-grow: 1; display: flex; height: 20px; border-radius: 4px; overflow: hidden; background: #f0f0f0; }
-        .bar-segment { height: 100%; }
-        .response-time-value { width: 80px; text-align: right; font-weight: 500; flex-shrink: 0; }
         .loader { display: none; text-align: center; padding: 50px; font-size: 1.2rem; color: #666; }
+
+        /* ===== UPDATED CSS FOR NEW LAYOUT ===== */
+        .location-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Pushes name to left, details to right */
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .location-item:last-child { border-bottom: none; }
+        .location-name { font-weight: 500; }
+        .response-details { /* New container for bar and time */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Aligns bar and time to the left */
+        }
+        .response-bar-container {
+            display: flex;
+            height: 12px; /* Thinner bar */
+            width: 80px; /* Fixed width for the compact bar */
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .bar-segment { height: 100%; }
+        .response-time-value {
+            margin-top: 5px; /* Space between bar and time */
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 500;
+        }
 
         /* ===== Mobile Responsive Styles ===== */
         @media (max-width: 768px) {
-            body {
-                padding: 15px 15px 0; /* Less padding on mobile */
-            }
-            .header-text-container {
-                margin: 10px 0 20px;
-            }
-            .main-heading {
-                font-size: 1.8rem; /* Smaller heading */
-            }
-            .sub-heading {
-                font-size: 1rem;
-            }
-            .search-box {
-                flex-direction: column; /* Stack input and button */
-                gap: 10px;
-                padding: 15px;
-            }
-            .summary-content {
-                flex-direction: column; /* Stack summary items */
-                gap: 15px;
-                text-align: center;
-            }
-            .global-results-header {
-                flex-direction: column;
-                gap: 15px;
-            }
-            .legend {
-                flex-wrap: wrap; /* Allow legend items to wrap */
-                justify-content: center;
-            }
-            .location-item {
-                flex-direction: column; /* Stack location name and bar */
-                align-items: flex-start; /* Align to the left */
-                gap: 10px;
-            }
-            .location-name {
-                width: 100%; /* Full width for location name */
-            }
-            .response-details-row { /* This is a new class we add in the JS */
-                width: 100%;
-                display: flex;
-                align-items: center;
-            }
+            body { padding: 15px 15px 0; }
+            .header-text-container { margin: 10px 0 20px; }
+            .main-heading { font-size: 1.8rem; }
+            .sub-heading { font-size: 1rem; }
+            .search-box { flex-direction: column; gap: 10px; padding: 15px; }
+            .summary-content { flex-direction: column; gap: 15px; text-align: center; }
+            .global-results-header { flex-direction: column; gap: 15px; }
+            .legend { flex-wrap: wrap; justify-content: center; }
         }
     </style>
 </head>
@@ -115,8 +104,8 @@
 
     <div class="search-container">
         <div class="search-box">
-            <input type="text" id="urlInput" placeholder="Enter your domain">
-            <button id="pingBtn" onclick="checkStatus()">Ping Now</button>
+            <input type="text" id="urlInput" placeholder="luxatic.com">
+            <button id="pingBtn" onclick="checkStatus()">Search</button>
         </div>
     </div>
 
@@ -154,6 +143,7 @@
     </div>
 
     <script>
+        // --- Existing JS functions ---
         const urlInput = document.getElementById('urlInput');
         const pingBtn = document.getElementById('pingBtn');
         const loader = document.getElementById('loader');
@@ -185,25 +175,28 @@
                 loader.style.display = 'none';
             }
         }
+        
         function displayResults(url, data) {
             if (data.length === 0) return;
             const fastestResult = data.reduce((min, current) => current.total < min.total ? current : min, data[0]);
             checkedUrlEl.textContent = url;
             fastestTimeEl.textContent = `${fastestResult.total} ms`;
             locationList.innerHTML = '';
-            const maxTime = Math.max(...data.map(res => res.total));
+            
             data.forEach(result => {
                 const item = document.createElement('li');
                 item.className = 'location-item';
-                const dnsWidth = (result.dns / maxTime) * 100;
-                const tcpWidth = (result.tcp / maxTime) * 100;
-                const tlsWidth = (result.tls / maxTime) * 100;
-                const firstByteWidth = (result.firstByte / maxTime) * 100;
                 
-                // UPDATED JAVASCRIPT: Added a new wrapper div for mobile layout
+                // Note: The percentages are now of the location's total time, not the max time
+                const dnsWidth = (result.dns / result.total) * 100;
+                const tcpWidth = (result.tcp / result.total) * 100;
+                const tlsWidth = (result.tls / result.total) * 100;
+                const firstByteWidth = (result.firstByte / result.total) * 100;
+                
+                // ===== UPDATED JAVASCRIPT: New structure for each result item =====
                 item.innerHTML = `
                     <span class="location-name">${result.location}</span>
-                    <div class="response-details-row">
+                    <div class="response-details">
                         <div class="response-bar-container">
                             <span class="bar-segment" style="width: ${dnsWidth}%; background: var(--dns-color);"></span>
                             <span class="bar-segment" style="width: ${tcpWidth}%; background: var(--tcp-color);"></span>
