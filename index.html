@@ -3,8 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Down Checker - Is Your Website Down?</title>
+    <title>Global Website Status Checker</title>
     <style>
+        :root {
+            --dns-color: #34a853; /* Green */
+            --tcp-color: #ea4335; /* Red */
+            --tls-color: #4285f4; /* Blue */
+            --first-byte-color: #fbbc05; /* Yellow */
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,73 +19,59 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #ffffff;
-            color: #1a1a1a;
-            padding: 20px;
-        }
-        
-        /* This top section is styled to be the gray box from the image */
-        .main-section {
-            background: #f7f8fa; /* Light gray background */
-            padding: 40px;
-            border-radius: 8px;
-            max-width: 900px;
-            margin: 40px auto 0 auto;
-        }
-        
-        .main-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .main-title {
-            font-size: 2em;
-            margin-bottom: 10px;
-            font-weight: 900;
-            text-align: center;
-            color: #1a1a1a;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f8f9fa;
+            color: #333;
         }
 
-        .main-subtitle {
+        .header-section {
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            padding: 50px 20px;
+            color: white;
             text-align: center;
-            font-size: 1.1em;
-            color: #666;
+        }
+
+        .header-section h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .header-section p {
+            font-size: 1.1rem;
+            opacity: 0.9;
             margin-bottom: 30px;
         }
-
+        
         .search-box {
             display: flex;
-            gap: 10px;
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto;
+            background: white;
+            border-radius: 50px;
+            padding: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .search-box input {
             flex: 1;
-            padding: 14px 18px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 1em;
-            background: #ffffff;
-            color: #000000;
-        }
-
-        .search-box input:focus {
+            border: none;
             outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            background: transparent;
+            color: #333;
         }
 
         .search-box button {
             background: #111827;
             color: white;
             border: none;
-            padding: 14px 30px;
-            border-radius: 6px;
-            font-size: 1em;
-            cursor: pointer;
+            border-radius: 50px;
+            padding: 12px 30px;
+            font-size: 1rem;
             font-weight: 500;
+            cursor: pointer;
             transition: background 0.2s;
         }
 
@@ -92,27 +85,36 @@
         }
 
         .container {
-            max-width: 900px; /* Same width as the top box for alignment */
-            margin: 30px auto 0 auto;
-            padding: 0;
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .results-section {
+            display: none; /* Hidden by default */
+            margin-bottom: 40px;
         }
         
-        /* This is the main white results card */
-        .status-card {
-            background: #ffffff;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            padding: 30px;
-        }
-
-        .status-header {
+        .results-summary-card {
             display: flex;
+            gap: 20px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 30px;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 25px;
         }
 
-        .status-icon {
+        .summary-left {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            border-right: 1px solid #e2e8f0;
+            padding-right: 30px;
+            flex-shrink: 0;
+        }
+
+        .status-icon.up {
             width: 48px;
             height: 48px;
             border-radius: 50%;
@@ -121,262 +123,271 @@
             justify-content: center;
             font-size: 24px;
             font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        .status-icon.up {
             background: #e6f4ea;
             color: #34a853;
         }
 
-        .status-icon.down {
-            background: #fce8e6;
-            color: #ea4335;
-        }
-
         .status-text h2 {
-            font-size: 1.75em;
-            margin-bottom: 2px;
-            color: #1a1a1a;
+            font-size: 1.75rem;
             font-weight: 600;
         }
-
         .status-text p {
+            font-size: 0.9rem;
             color: #666;
-            font-size: 1em;
         }
         
-        .response-time {
-            text-align: center;
-            padding: 0;
-            margin-bottom: 25px;
+        .fastest-response {
+            padding-left: 20px;
         }
 
-        .response-time .value {
-            font-size: 2.75em;
+        .fastest-response .value {
+            font-size: 2rem;
             font-weight: 700;
-            color: #1a1a1a;
-        }
-
-        .response-time .label {
-            color: #666;
-            font-size: 1em;
-            margin-top: 5px;
         }
         
-        /* This replaces the original nested-box look */
-        .status-details {
-            margin: 0;
-            padding-top: 25px;
-            background: transparent;
-            border: none;
-            border-radius: 0;
-            border-top: 1px solid #f0f0f0;
+        .fastest-response .label {
+            font-size: 0.9rem;
+            color: #666;
         }
 
-        .detail-row {
+        .summary-right {
+            flex-grow: 1;
+            padding-left: 20px;
+        }
+
+        .summary-right h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .summary-right button {
+            background: #111827;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .global-results {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 30px;
+        }
+
+        .global-results-header {
             display: flex;
             justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #f0f0f0;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .global-results-header h2 {
+            font-size: 1.5rem;
         }
 
-        .detail-row:last-child {
+        .legend {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        .location-list {
+            list-style: none;
+        }
+        
+        .location-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .location-item:last-child {
             border-bottom: none;
         }
 
-        .detail-label {
-            color: #666;
-            font-weight: 400;
-        }
-
-        .detail-value {
-            color: #333;
+        .location-name {
+            width: 250px;
+            flex-shrink: 0;
             font-weight: 500;
         }
 
-        .loading {
+        .response-bar-container {
+            flex-grow: 1;
+            display: flex;
+            height: 20px;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #f0f0f0;
+        }
+        .bar-segment {
+            height: 100%;
+        }
+        .response-time-value {
+            width: 80px;
+            text-align: right;
+            font-weight: 500;
+            flex-shrink: 0;
+        }
+        
+        .loader {
+            display: none;
             text-align: center;
-            padding: 60px;
+            padding: 50px;
+            font-size: 1.2rem;
             color: #666;
-            font-size: 1.1em;
-        }
-
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #666;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .no-results {
-            text-align: center;
-            padding: 40px 20px;
-            color: #666;
-        }
-
-        .no-results-icon {
-            font-size: 4em;
-            margin-bottom: 20px;
-            opacity: 0.3;
-        }
-
-        .no-results-text {
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
-
-        .no-results-subtext {
-            font-size: 0.95em;
-            opacity: 0.7;
-        }
-
-        @media (max-width: 768px) {
-            .main-section {
-                margin-top: 20px;
-                padding: 20px;
-            }
-            .main-title {
-                font-size: 1.8em;
-            }
-
-            .search-box {
-                flex-direction: column;
-            }
-
-            .status-header {
-                flex-direction: column;
-                text-align: center;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="main-section">
-        <div class="main-content">
-            <h1 class="main-title">Is your website down?</h1>
-            <p class="main-subtitle">Check instantly if your website is down or is it just you.</p>
-            
-            <div class="search-box">
-                <input type="text" id="urlInput" placeholder="peekmyip.com" value="">
-                <button id="pingBtn" onclick="checkStatus()">Search</button>
-            </div>
+
+    <header class="header-section">
+        <h1>Global Website Status Checker</h1>
+        <p>Check if your website is down from multiple locations around the world.</p>
+        <div class="search-box">
+            <input type="text" id="urlInput" placeholder="facebook.com">
+            <button id="pingBtn" onclick="checkStatus()">Ping Now</button>
         </div>
-    </div>
+    </header>
 
     <div class="container">
-        <div id="statusContainer">
-            <div class="status-card">
-                <div class="no-results">
-                    <div class="no-results-icon">🔍</div>
-                    <div class="no-results-text">Enter a URL to check its status</div>
-                    <div class="no-results-subtext">Type a website URL above and click Search</div>
+        <div id="loader" class="loader">
+            <p>Pinging from global locations... this may take a moment.</p>
+        </div>
+        
+        <div id="resultsSection" class="results-section">
+            <div class="results-summary-card">
+                <div class="summary-left">
+                    <div class="status-icon up">✓</div>
+                    <div class="status-text">
+                        <h2>Up</h2>
+                        <p id="checkedUrl">www.example.com</p>
+                    </div>
+                    <div class="fastest-response">
+                        <div id="fastestTime" class="value">20 ms</div>
+                        <div class="label">Fastest response time</div>
+                    </div>
+                </div>
+                <div class="summary-right">
+                    <h3>Start monitoring this website for FREE</h3>
+                    <button>Start Monitoring</button>
                 </div>
             </div>
+        </div>
+
+        <div id="globalResults" class="global-results" style="display: none;">
+            <div class="global-results-header">
+                <h2>Global Response Time</h2>
+                <div class="legend">
+                    <div class="legend-item"><span class="legend-color" style="background: var(--dns-color);"></span> DNS</div>
+                    <div class="legend-item"><span class="legend-color" style="background: var(--tcp-color);"></span> TCP</div>
+                    <div class="legend-item"><span class="legend-color" style="background: var(--tls-color);"></span> TLS</div>
+                    <div class="legend-item"><span class="legend-color" style="background: var(--first-byte-color);"></span> FirstByte</div>
+                </div>
+            </div>
+            <ul id="locationList" class="location-list">
+                <!-- Location results will be injected here by JavaScript -->
+            </ul>
         </div>
     </div>
 
     <script>
-        // Replace this with your Cloudflare Worker URL after deployment
-        const WORKER_URL = '/api/check';
+        const urlInput = document.getElementById('urlInput');
+        const pingBtn = document.getElementById('pingBtn');
+        const loader = document.getElementById('loader');
+        const resultsSection = document.getElementById('resultsSection');
+        const globalResults = document.getElementById('globalResults');
+        const locationList = document.getElementById('locationList');
+        const checkedUrlEl = document.getElementById('checkedUrl');
+        const fastestTimeEl = document.getElementById('fastestTime');
 
         async function checkStatus() {
-            const urlInput = document.getElementById('urlInput');
-            const pingBtn = document.getElementById('pingBtn');
             let url = urlInput.value.trim();
-
             if (!url) {
                 alert('Please enter a website URL');
                 return;
             }
-
-            // Clean up URL
             url = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+            urlInput.value = url;
 
             pingBtn.disabled = true;
-            pingBtn.textContent = 'Checking...';
-
-            document.getElementById('statusContainer').innerHTML = `
-                <div class="status-card">
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        <div>Checking website status...</div>
-                    </div>
-                </div>
-            `;
+            pingBtn.textContent = 'Pinging...';
+            resultsSection.style.display = 'none';
+            globalResults.style.display = 'none';
+            loader.style.display = 'block';
 
             try {
-                const response = await fetch(`${WORKER_URL}?url=${encodeURIComponent(url)}`);
-                const data = await response.json();
-
-                if (data.error) {
-                    displayStatus(url, false, 0, data.error, data.statusCode || 0);
-                } else {
-                    displayStatus(url, data.isUp, data.responseTime, data.message, data.statusCode);
+                const response = await fetch(`/api/check?url=${encodeURIComponent(url)}`);
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.statusText}`);
                 }
+                const data = await response.json();
+                displayResults(url, data);
 
             } catch (error) {
-                displayStatus(url, false, 0, 'Error connecting to checking service: ' + error.message, 0);
+                alert('An error occurred: ' + error.message);
+            } finally {
+                pingBtn.disabled = false;
+                pingBtn.textContent = 'Ping Now';
+                loader.style.display = 'none';
             }
-
-            pingBtn.disabled = false;
-            pingBtn.textContent = 'Search';
         }
+        
+        function displayResults(url, data) {
+            if (data.length === 0) return;
 
-        function displayStatus(url, isUp, responseTime, message, statusCode) {
-            const statusHtml = `
-                <div class="status-card">
-                    <div class="status-header">
-                        <div class="status-icon ${isUp ? 'up' : 'down'}">
-                            ${isUp ? '✓' : '✕'}
-                        </div>
-                        <div class="status-text">
-                            <h2>${isUp ? 'Up' : 'Down'}</h2>
-                            <p>${url}</p>
-                        </div>
-                    </div>
-                    ${responseTime > 0 ? `
-                        <div class="response-time">
-                            <div class="value">${responseTime} ms</div>
-                            <div class="label">Response time</div>
-                        </div>
-                    ` : ''}
-                    <div class="status-details">
-                        <div class="detail-row">
-                            <span class="detail-label">Status</span>
-                            <span class="detail-value">${message}</span>
-                        </div>
-                        ${statusCode > 0 ? `
-                            <div class="detail-row">
-                                <span class="detail-label">HTTP Status</span>
-                                <span class="detail-value">${statusCode}</span>
-                            </div>
-                        ` : ''}
-                        <div class="detail-row">
-                            <span class="detail-label">Checked at</span>
-                            <span class="detail-value">${new Date().toLocaleString()}</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label">URL</span>
-                            <span class="detail-value">${url}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
+            // Find fastest response
+            const fastestResult = data.reduce((min, current) => current.total < min.total ? current : min, data[0]);
             
-            document.getElementById('statusContainer').innerHTML = statusHtml;
+            checkedUrlEl.textContent = url;
+            fastestTimeEl.textContent = `${fastestResult.total} ms`;
+            
+            // Clear previous results
+            locationList.innerHTML = '';
+            
+            // Find max response time for bar scaling
+            const maxTime = Math.max(...data.map(res => res.total));
+
+            data.forEach(result => {
+                const item = document.createElement('li');
+                item.className = 'location-item';
+                
+                const dnsWidth = (result.dns / maxTime) * 100;
+                const tcpWidth = (result.tcp / maxTime) * 100;
+                const tlsWidth = (result.tls / maxTime) * 100;
+                const firstByteWidth = (result.firstByte / maxTime) * 100;
+
+                item.innerHTML = `
+                    <span class="location-name">${result.location}</span>
+                    <div class="response-bar-container">
+                        <span class="bar-segment" style="width: ${dnsWidth}%; background: var(--dns-color);"></span>
+                        <span class="bar-segment" style="width: ${tcpWidth}%; background: var(--tcp-color);"></span>
+                        <span class="bar-segment" style="width: ${tlsWidth}%; background: var(--tls-color);"></span>
+                        <span class="bar-segment" style="width: ${firstByteWidth}%; background: var(--first-byte-color);"></span>
+                    </div>
+                    <span class="response-time-value">${result.total}ms</span>
+                `;
+                locationList.appendChild(item);
+            });
+
+            resultsSection.style.display = 'block';
+            globalResults.style.display = 'block';
         }
 
-        // Allow Enter key to submit
-        document.getElementById('urlInput').addEventListener('keypress', function(e) {
+        urlInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 checkStatus();
             }
