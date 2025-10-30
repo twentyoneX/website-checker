@@ -5,19 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Website Status Checker</title>
     <style>
+        /* All your existing CSS goes here. No changes needed in the style section. */
         :root {
             --dns-color: #34a853; /* Green */
             --tcp-color: #ea4335; /* Red */
             --tls-color: #4285f4; /* Blue */
             --first-byte-color: #fbbc05; /* Yellow */
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: #f7f8fa;
@@ -25,237 +20,58 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px 20px 0; /* UPDATED: Bottom padding removed */
+            padding: 20px 20px 0;
         }
-
-        .header-text-container {
-            text-align: center;
-            margin: 40px 0;
-            max-width: 900px;
-            width: 100%;
-        }
-        
-        .main-heading {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 15px;
-        }
-        
-        .sub-heading {
-            font-size: 1.1rem;
-            color: #666;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        
-        .search-container {
-            width: 100%;
-            max-width: 900px;
-            margin-bottom: 30px;
-        }
-
-        .search-box {
-            display: flex;
-            width: 100%;
-            background: white;
-            border-radius: 8px;
-            padding: 8px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .search-box input {
-            flex: 1;
-            border: none;
-            outline: none;
-            padding: 10px 20px;
-            font-size: 1.1rem;
-            background: transparent;
-            color: #333;
-        }
-
-        .search-box button {
-            background: #111827;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 30px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .search-box button:hover {
-            background: #374151;
-        }
-
-        .search-box button:disabled {
-            background: #666;
-            cursor: not-allowed;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .results-section {
-            display: none; 
-            margin-bottom: 30px;
-        }
-        
-        .results-summary-card {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 30px;
-            align-items: center;
-        }
-
-        .summary-content {
-            display: flex;
-            gap: 30px;
-            align-items: center;
-        }
-
-        .status-icon.up {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            font-weight: bold;
-            background: #e6f4ea;
-            color: #34a853;
-        }
-
-        .status-text h2 {
-            font-size: 1.75rem;
-            font-weight: 600;
-        }
-        .status-text p {
-            font-size: 0.9rem;
-            color: #666;
-        }
-        
-        .fastest-response .value {
-            font-size: 2rem;
-            font-weight: 700;
-        }
-        
-        .fastest-response .label {
-            font-size: 0.9rem;
-            color: #666;
-        }
-        
-        .global-results {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 30px;
-        }
-
-        .global-results-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .global-results-header h2 {
-            font-size: 1.5rem;
-        }
-
-        .legend {
-            display: flex;
-            gap: 20px;
-            font-size: 0.9rem;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .legend-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 2px;
-        }
-
-        .location-list {
-            list-style: none;
-        }
-        
-        .location-item {
-            display: flex;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        .location-item:last-child {
-            border-bottom: none;
-        }
-
-        .location-name {
-            width: 250px;
-            flex-shrink: 0;
-            font-weight: 500;
-        }
-
-        .response-bar-container {
-            flex-grow: 1;
-            display: flex;
-            height: 20px;
-            border-radius: 4px;
-            overflow: hidden;
-            background: #f0f0f0;
-        }
-        .bar-segment {
-            height: 100%;
-        }
-        .response-time-value {
-            width: 80px;
-            text-align: right;
-            font-weight: 500;
-            flex-shrink: 0;
-        }
-        
-        .loader {
-            display: none;
-            text-align: center;
-            padding: 50px;
-            font-size: 1.2rem;
-            color: #666;
-        }
+        .header-text-container { text-align: center; margin: 40px 0; max-width: 900px; width: 100%; }
+        .main-heading { font-size: 2.5rem; font-weight: 700; color: #1a1a1a; margin-bottom: 15px; }
+        .sub-heading { font-size: 1.1rem; color: #666; max-width: 500px; margin: 0 auto; }
+        .search-container { width: 100%; max-width: 900px; margin-bottom: 30px; }
+        .search-box { display: flex; width: 100%; background: white; border-radius: 8px; padding: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); }
+        .search-box input { flex: 1; border: none; outline: none; padding: 10px 20px; font-size: 1.1rem; background: transparent; color: #333; }
+        .search-box button { background: #111827; color: white; border: none; border-radius: 8px; padding: 12px 30px; font-size: 1rem; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+        .search-box button:hover { background: #374151; }
+        .search-box button:disabled { background: #666; cursor: not-allowed; }
+        .container { width: 100%; max-width: 900px; margin: 0 auto; }
+        .results-section { display: none; margin-bottom: 30px; }
+        .results-summary-card { display: flex; justify-content: center; gap: 20px; background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 30px; align-items: center; }
+        .summary-content { display: flex; gap: 30px; align-items: center; }
+        .status-icon.up { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; background: #e6f4ea; color: #34a853; }
+        .status-text h2 { font-size: 1.75rem; font-weight: 600; }
+        .status-text p { font-size: 0.9rem; color: #666; }
+        .fastest-response .value { font-size: 2rem; font-weight: 700; }
+        .fastest-response .label { font-size: 0.9rem; color: #666; }
+        .global-results { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 30px; }
+        .global-results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .global-results-header h2 { font-size: 1.5rem; }
+        .legend { display: flex; gap: 20px; font-size: 0.9rem; }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-color { width: 12px; height: 12px; border-radius: 2px; }
+        .location-list { list-style: none; }
+        .location-item { display: flex; align-items: center; padding: 15px 0; border-bottom: 1px solid #f0f0f0; }
+        .location-item:last-child { border-bottom: none; }
+        .location-name { width: 250px; flex-shrink: 0; font-weight: 500; }
+        .response-bar-container { flex-grow: 1; display: flex; height: 20px; border-radius: 4px; overflow: hidden; background: #f0f0f0; }
+        .bar-segment { height: 100%; }
+        .response-time-value { width: 80px; text-align: right; font-weight: 500; flex-shrink: 0; }
+        .loader { display: none; text-align: center; padding: 50px; font-size: 1.2rem; color: #666; }
     </style>
 </head>
 <body>
-
+    <!-- Your existing HTML content for the tool goes here... -->
     <div class="header-text-container">
         <h1 class="main-heading">Is your website down?</h1>
         <p class="sub-heading">Check instantly if your website page is down or is it just you.</p>
     </div>
-
     <div class="search-container">
         <div class="search-box">
             <input type="text" id="urlInput" placeholder="luxatic.com">
             <button id="pingBtn" onclick="checkStatus()">Search</button>
         </div>
     </div>
-
     <div class="container">
         <div id="loader" class="loader">
             <p>Pinging from global locations... this may take a moment.</p>
         </div>
-        
         <div id="resultsSection" class="results-section">
             <div class="results-summary-card">
                 <div class="summary-content">
@@ -271,7 +87,6 @@
                 </div>
             </div>
         </div>
-
         <div id="globalResults" class="global-results" style="display: none;">
             <div class="global-results-header">
                 <h2>Global Response Time</h2>
@@ -282,13 +97,12 @@
                     <div class="legend-item"><span class="legend-color" style="background: var(--first-byte-color);"></span> FirstByte</div>
                 </div>
             </div>
-            <ul id="locationList" class="location-list">
-                <!-- Location results will be injected here by JavaScript -->
-            </ul>
+            <ul id="locationList" class="location-list"></ul>
         </div>
     </div>
 
     <script>
+        // Your existing checkStatus() and displayResults() functions go here...
         const urlInput = document.getElementById('urlInput');
         const pingBtn = document.getElementById('pingBtn');
         const loader = document.getElementById('loader');
@@ -297,30 +111,21 @@
         const locationList = document.getElementById('locationList');
         const checkedUrlEl = document.getElementById('checkedUrl');
         const fastestTimeEl = document.getElementById('fastestTime');
-
         async function checkStatus() {
             let url = urlInput.value.trim();
-            if (!url) {
-                alert('Please enter a website URL');
-                return;
-            }
+            if (!url) { alert('Please enter a website URL'); return; }
             url = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
             urlInput.value = url;
-
             pingBtn.disabled = true;
             pingBtn.textContent = 'Searching...';
             resultsSection.style.display = 'none';
             globalResults.style.display = 'none';
             loader.style.display = 'block';
-
             try {
                 const response = await fetch(`/api/check?url=${encodeURIComponent(url)}`);
-                if (!response.ok) {
-                    throw new Error(`Server error: ${response.statusText}`);
-                }
+                if (!response.ok) { throw new Error(`Server error: ${response.statusText}`); }
                 const data = await response.json();
                 displayResults(url, data);
-
             } catch (error) {
                 alert('An error occurred: ' + error.message);
             } finally {
@@ -329,28 +134,20 @@
                 loader.style.display = 'none';
             }
         }
-        
         function displayResults(url, data) {
             if (data.length === 0) return;
-
             const fastestResult = data.reduce((min, current) => current.total < min.total ? current : min, data[0]);
-            
             checkedUrlEl.textContent = url;
             fastestTimeEl.textContent = `${fastestResult.total} ms`;
-            
             locationList.innerHTML = '';
-            
             const maxTime = Math.max(...data.map(res => res.total));
-
             data.forEach(result => {
                 const item = document.createElement('li');
                 item.className = 'location-item';
-                
                 const dnsWidth = (result.dns / maxTime) * 100;
                 const tcpWidth = (result.tcp / maxTime) * 100;
                 const tlsWidth = (result.tls / maxTime) * 100;
                 const firstByteWidth = (result.firstByte / maxTime) * 100;
-
                 item.innerHTML = `
                     <span class="location-name">${result.location}</span>
                     <div class="response-bar-container">
@@ -363,16 +160,30 @@
                 `;
                 locationList.appendChild(item);
             });
-
             resultsSection.style.display = 'block';
             globalResults.style.display = 'block';
         }
-
         urlInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                checkStatus();
-            }
+            if (e.key === 'Enter') { checkStatus(); }
         });
     </script>
+
+    <!-- ===== NEW SCRIPT TO SEND HEIGHT TO PARENT PAGE ===== -->
+    <script>
+      const sendHeight = () => {
+        // We add a small buffer (5px) to prevent scrollbars from appearing
+        const height = document.body.scrollHeight + 5;
+        // The parent page is peekmyip.com. '*' is also an option for testing.
+        parent.postMessage({ type: 'resize', height: height }, 'https://www.peekmyip.com');
+      };
+
+      // Use a ResizeObserver to automatically send the height whenever content changes
+      const observer = new ResizeObserver(sendHeight);
+      observer.observe(document.body);
+
+      // Also send height on initial load
+      window.onload = sendHeight;
+    </script>
+    <!-- ===== END NEW SCRIPT ===== -->
 </body>
 </html>
